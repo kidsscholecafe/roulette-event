@@ -132,4 +132,16 @@ spinBtn.addEventListener("click", () => {
   const reward = getReward();
   const rotation = 360 * 5 + reward.angle;
 
-  wheel.style.transform = `ro
+  wheel.style.transform = `rotate(${rotation}deg)`;
+
+  setTimeout(() => {
+    result.innerText = `🎁 ${reward.name} 당첨!`;
+    notice.innerText = "※ 당첨 화면을 캡처하여 네이버폼으로 인증해 주세요.";
+    const today = new Date().toISOString().slice(0, 10);
+    localStorage.setItem("rouletteDate", today);
+  }, 4000);
+});
+</script>
+
+</body>
+</html>
