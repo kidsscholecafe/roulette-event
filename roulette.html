@@ -11,25 +11,33 @@ body {
   text-align: center;
   padding: 20px;
 }
-h1 {
-  margin-bottom: 5px;
-}
+
+h1 { margin-bottom: 5px; }
+
 #wheel-container {
   position: relative;
-  width: 280px;
-  height: 280px;
+  width: 300px;
+  height: 300px;
   margin: 30px auto;
 }
+
 #wheel {
   width: 100%;
   height: 100%;
   border-radius: 50%;
   border: 8px solid #333;
+  background:
+    conic-gradient(
+      #FFD54F 0deg 216deg,     /* 5천P 60% */
+      #4FC3F7 216deg 324deg,  /* 1만P 30% */
+      #FF8A65 324deg 360deg   /* 5만P 10% */
+    );
   transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
 }
+
 .pointer {
   position: absolute;
-  top: -16px;
+  top: -18px;
   left: 50%;
   transform: translateX(-50%);
   width: 0;
@@ -38,6 +46,26 @@ h1 {
   border-right: 16px solid transparent;
   border-bottom: 32px solid #ff3b3b;
 }
+
+.label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0 0;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.label.p5000 {
+  transform: rotate(108deg) translate(0, -120px);
+}
+.label.p10000 {
+  transform: rotate(270deg) translate(0, -120px);
+}
+.label.p50000 {
+  transform: rotate(342deg) translate(0, -120px);
+}
+
 button {
   background: #ff6b00;
   color: #fff;
@@ -47,9 +75,8 @@ button {
   border-radius: 8px;
   cursor: pointer;
 }
-button:disabled {
-  background: #aaa;
-}
+button:disabled { background: #aaa; }
+
 #result {
   margin-top: 20px;
   font-size: 18px;
@@ -70,21 +97,11 @@ button:disabled {
 
 <div id="wheel-container">
   <div class="pointer"></div>
+  <div id="wheel"></div>
 
-  <!-- 룰렛 -->
-  <svg id="wheel" viewBox="0 0 100 100">
-    <!-- 5천 포인트 60% (216도) -->
-    <path d="M50 50 L50 0 A50 50 0 1 1 6.7 25 Z" fill="#FFD54F"/>
-    <!-- 1만 포인트 30% (108도) -->
-    <path d="M50 50 L6.7 25 A50 50 0 0 1 93.3 25 Z" fill="#4FC3F7"/>
-    <!-- 5만 포인트 10% (36도) -->
-    <path d="M50 50 L93.3 25 A50 50 0 0 1 50 0 Z" fill="#FF8A65"/>
-
-    <!-- 텍스트 -->
-    <text x="50" y="18" font-size="6" text-anchor="middle">5천P</text>
-    <text x="18" y="62" font-size="6" text-anchor="middle">1만P</text>
-    <text x="82" y="62" font-size="6" text-anchor="middle">5만P</text>
-  </svg>
+  <div class="label p5000">5천P</div>
+  <div class="label p10000">1만P</div>
+  <div class="label p50000">5만P</div>
 </div>
 
 <button id="spinBtn">룰렛 돌리기</button>
@@ -98,11 +115,10 @@ const wheel = document.getElementById("wheel");
 const result = document.getElementById("result");
 const notice = document.getElementById("notice");
 
-/* 보상 + 확률 + 포인터 기준 각도 */
 const rewards = [
-  { name: "5천 포인트", weight: 60, angle: 270 },
-  { name: "1만 포인트", weight: 30, angle: 150 },
-  { name: "5만 포인트", weight: 10, angle: 30 }
+  { name: "5천 포인트", weight: 60, angle: 108 },
+  { name: "1만 포인트", weight: 30, angle: 270 },
+  { name: "5만 포인트", weight: 10, angle: 342 }
 ];
 
 function hasPlayedToday() {
@@ -134,14 +150,4 @@ spinBtn.addEventListener("click", () => {
 
   wheel.style.transform = `rotate(${rotation}deg)`;
 
-  setTimeout(() => {
-    result.innerText = `🎁 ${reward.name} 당첨!`;
-    notice.innerText = "※ 당첨 화면을 캡처하여 네이버폼으로 인증해 주세요.";
-    const today = new Date().toISOString().slice(0, 10);
-    localStorage.setItem("rouletteDate", today);
-  }, 4000);
-});
-</script>
-
-</body>
-</html>
+  set
