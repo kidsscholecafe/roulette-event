@@ -7,11 +7,13 @@
 <style>
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+  background: #f6f6f6;
   text-align: center;
-  background: #f7f7f7;
   padding: 20px;
 }
-h1 { margin-bottom: 10px; }
+h1 {
+  margin-bottom: 5px;
+}
 #wheel-container {
   position: relative;
   width: 280px;
@@ -27,14 +29,14 @@ h1 { margin-bottom: 10px; }
 }
 .pointer {
   position: absolute;
-  top: -15px;
+  top: -16px;
   left: 50%;
   transform: translateX(-50%);
   width: 0;
   height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 30px solid #ff3b3b;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-bottom: 32px solid #ff3b3b;
 }
 button {
   background: #ff6b00;
@@ -47,15 +49,14 @@ button {
 }
 button:disabled {
   background: #aaa;
-  cursor: not-allowed;
 }
 #result {
-  margin-top: 25px;
+  margin-top: 20px;
   font-size: 18px;
   font-weight: bold;
 }
 .notice {
-  margin-top: 15px;
+  margin-top: 12px;
   font-size: 14px;
   color: #555;
 }
@@ -64,19 +65,25 @@ button:disabled {
 
 <body>
 
-<h1>🎉 포인트 룰렛 이벤트 🎉</h1>
+<h1>🎡 포인트 룰렛 이벤트</h1>
 <p>하루 1회 참여 가능</p>
 
 <div id="wheel-container">
   <div class="pointer"></div>
+
+  <!-- 룰렛 -->
   <svg id="wheel" viewBox="0 0 100 100">
-    <circle cx="50" cy="50" r="50" fill="#fff"/>
-    <path d="M50 50 L50 0 A50 50 0 0 1 93.3 25 Z" fill="#FFD54F"/>
-    <path d="M50 50 L93.3 25 A50 50 0 0 1 93.3 75 Z" fill="#4FC3F7"/>
-    <path d="M50 50 L93.3 75 A50 50 0 0 1 50 100 Z" fill="#FF8A65"/>
-    <text x="65" y="20" font-size="6" text-anchor="middle">5천P</text>
-    <text x="85" y="55" font-size="6" text-anchor="middle">1만P</text>
-    <text x="65" y="90" font-size="6" text-anchor="middle">5만P</text>
+    <!-- 5천 포인트 60% (216도) -->
+    <path d="M50 50 L50 0 A50 50 0 1 1 6.7 25 Z" fill="#FFD54F"/>
+    <!-- 1만 포인트 30% (108도) -->
+    <path d="M50 50 L6.7 25 A50 50 0 0 1 93.3 25 Z" fill="#4FC3F7"/>
+    <!-- 5만 포인트 10% (36도) -->
+    <path d="M50 50 L93.3 25 A50 50 0 0 1 50 0 Z" fill="#FF8A65"/>
+
+    <!-- 텍스트 -->
+    <text x="50" y="18" font-size="6" text-anchor="middle">5천P</text>
+    <text x="18" y="62" font-size="6" text-anchor="middle">1만P</text>
+    <text x="82" y="62" font-size="6" text-anchor="middle">5만P</text>
   </svg>
 </div>
 
@@ -86,17 +93,31 @@ button:disabled {
 <div class="notice" id="notice"></div>
 
 <script>
-const rewards = ["5천 포인트", "1만 포인트", "5만 포인트"];
-const angles = [330, 90, 210]; // 각 보상 위치
 const spinBtn = document.getElementById("spinBtn");
 const wheel = document.getElementById("wheel");
 const result = document.getElementById("result");
 const notice = document.getElementById("notice");
 
+/* 보상 + 확률 + 포인터 기준 각도 */
+const rewards = [
+  { name: "5천 포인트", weight: 60, angle: 270 },
+  { name: "1만 포인트", weight: 30, angle: 150 },
+  { name: "5만 포인트", weight: 10, angle: 30 }
+];
+
 function hasPlayedToday() {
-  const last = localStorage.getItem("rouletteDate");
-  const today = new Date().toISOString().slice(0,10);
-  return last === today;
+  const saved = localStorage.getItem("rouletteDate");
+  const today = new Date().toISOString().slice(0, 10);
+  return saved === today;
+}
+
+function getReward() {
+  const rand = Math.random() * 100;
+  let sum = 0;
+  for (let r of rewards) {
+    sum += r.weight;
+    if (rand <= sum) return r;
+  }
 }
 
 if (hasPlayedToday()) {
@@ -108,19 +129,7 @@ spinBtn.addEventListener("click", () => {
   if (hasPlayedToday()) return;
 
   spinBtn.disabled = true;
-  const index = Math.floor(Math.random() * rewards.length);
-  const rotation = 360 * 5 + angles[index];
+  const reward = getReward();
+  const rotation = 360 * 5 + reward.angle;
 
-  wheel.style.transform = `rotate(${rotation}deg)`;
-
-  setTimeout(() => {
-    result.innerText = `🎁 ${rewards[index]} 당첨!`;
-    notice.innerText = "※ 당첨 화면 캡처 후 네이버폼으로 인증해 주세요.";
-    const today = new Date().toISOString().slice(0,10);
-    localStorage.setItem("rouletteDate", today);
-  }, 4000);
-});
-</script>
-
-</body>
-</html>
+  wheel.style.transform = `ro
